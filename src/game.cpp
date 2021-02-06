@@ -95,11 +95,11 @@ void Game::Update(SnakeStatus &s_status) {
   }
   else if(s_status==SnakeStatus::rDead)
   {
-    snake.Update();
+    snake.Update(rsnake);
   }
   else
   {
-    snake.Update();
+    snake.Update(rsnake);
 
     int new_x = static_cast<int>(snake.head_x);
     int new_y = static_cast<int>(snake.head_y);

@@ -70,7 +70,7 @@ void Rival_Snake::Update(std::shared_ptr<SDL_Point> food, bool &running, SnakeSt
         static_cast<int>(head_y)};  // We first capture the head's cell before updating.
         if(s_status==SnakeStatus::sDead)
         {
-          std::cout<<"You Lose!"<<std::endl;
+          //std::cout<<"You Lose!"<<std::endl;
           UpdateHead();
         }
         else
@@ -85,11 +85,14 @@ void Rival_Snake::Update(std::shared_ptr<SDL_Point> food, bool &running, SnakeSt
   // cell.
         if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) 
         {
+            std::unique_lock<std::mutex> lck(_mtx);
             this->UpdateBody(current_cell, prev_cell);
+            lck.unlock();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         
     }
-    std::cout<<"running in snake "<<running<<std::endl;
+    //std::cout<<"running in snake "<<running<<std::endl;
 }
 
 void Rival_Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {

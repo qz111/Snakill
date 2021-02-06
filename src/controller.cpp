@@ -44,5 +44,5 @@ void Controller::HandleInput(bool &running, Snake &snake, SDL_Event &e) const {
       }
     }
   }
-  std::cout<<"running in controller "<<running<<std::endl;
+  //std::cout<<"running in controller "<<running<<std::endl;
 }

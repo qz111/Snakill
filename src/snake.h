@@ -3,6 +3,9 @@
 
 #include <vector>
 #include "SDL.h"
+#include <mutex>
+#include <memory>
+class Rival_Snake;
 
 class Snake {
  public:
@@ -14,11 +17,11 @@ class Snake {
         head_x(grid_width / 2),
         head_y(grid_height / 2) {}
   Snake(){}
-  void Update();
+  void Update(std::shared_ptr<Rival_Snake> rsnake);
 
   void GrowBody();
   bool SnakeCell(const int &x, const int &y);
-
+  bool CheckTouch(std::shared_ptr<Rival_Snake> rsnake,SDL_Point &current_head_cell);
   Direction direction = Direction::kUp;
 
   float speed{0.1f};
@@ -27,7 +30,8 @@ class Snake {
   float head_x;
   float head_y;
   std::vector<SDL_Point> body;
-  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
+  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell, std::shared_ptr<Rival_Snake> rsnake);
+  static std::mutex _mtx;
 
  private:
   void UpdateHead();
