@@ -47,17 +47,36 @@ void Rival_Snake::UpdateHead(std::shared_ptr<SDL_Point> food)
     }
     
 }
+void Rival_Snake::UpdateHead()
+{
+  head_x+=speed;
+  head_x = fmod(head_x + grid_width, grid_width);
+}
 
-void Rival_Snake::Update(std::shared_ptr<SDL_Point> food, bool &running)
+void Rival_Snake::Update(std::shared_ptr<SDL_Point> food, bool &running, SnakeStatus &s_status)
 {
     while(running)
     {
         //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if(speed<=0.0f) 
+        {
+          s_status=SnakeStatus::rDead;
+          std::cout<<"You WIn!!"<<std::endl;
+          return;
+        }
         auto msg=_queue->receive();
         SDL_Point prev_cell{
         static_cast<int>(head_x),
         static_cast<int>(head_y)};  // We first capture the head's cell before updating.
-        UpdateHead(food);
+        if(s_status==SnakeStatus::sDead)
+        {
+          std::cout<<"You Lose!"<<std::endl;
+          UpdateHead();
+        }
+        else
+        {
+          UpdateHead(food);
+        }
         SDL_Point current_cell{
         static_cast<int>(head_x),
         static_cast<int>(head_y)};  // Capture the head's cell after updating.

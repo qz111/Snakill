@@ -26,8 +26,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
+  SnakeStatus s_status=SnakeStatus::Allalive;
   SDL_Event e;
-  std::thread t(&Rival_Snake::Update,rsnake,food, std::ref(running));
+  std::thread t(&Rival_Snake::Update,rsnake,food, std::ref(running), std::ref(s_status));
   std::thread t1(&Controller::HandleInput,&controller,std::ref(running),std::ref(snake),std::ref(e));
   while (running) {
     frame_start = SDL_GetTicks();
@@ -35,7 +36,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     //controller.HandleInput(running, snake);
     rsnake->getptr()->send(1);
-    Update();
+    Update(s_status);
     
     if(foodiseaten)
     {
@@ -86,26 +87,37 @@ void Game::PlaceFood() {
   }
 }
 
-void Game::Update() {
-  if (!snake.alive) return;
-
-  snake.Update();
-
-  int new_x = static_cast<int>(snake.head_x);
-  int new_y = static_cast<int>(snake.head_y);
-  // Check if there's food over here
-  if (food->x == new_x && food->y == new_y) {
-    score++;
-    foodiseaten=true;
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
-  }
-  else if(rsnake->GetFood())
+void Game::Update(SnakeStatus &s_status) {
+  if (!snake.alive) 
   {
-    foodiseaten=true;
-    rsnake->GrowBody();
-    //std::cout<<"it is here 1"<<std::endl;
+    s_status=SnakeStatus::sDead;
+    return;
+  }
+  else if(s_status==SnakeStatus::rDead)
+  {
+    snake.Update();
+  }
+  else
+  {
+    snake.Update();
+
+    int new_x = static_cast<int>(snake.head_x);
+    int new_y = static_cast<int>(snake.head_y);
+    // Check if there's food over here
+    if (food->x == new_x && food->y == new_y) {
+      score++;
+      foodiseaten=true;
+      // Grow snake and increase speed.
+      snake.GrowBody();
+      snake.speed += 0.01;
+      rsnake->speed-=0.02;
+    }
+    else if(rsnake->GetFood())
+    {
+      foodiseaten=true;
+      rsnake->GrowBody();
+      //std::cout<<"it is here 1"<<std::endl;
+    }
   }
 }
 

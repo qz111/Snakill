@@ -21,7 +21,12 @@ std::vector<int> _queue;
 std::condition_variable _condition;
 std::mutex _mutex;
 };
-
+enum SnakeStatus
+{
+  Allalive,
+  rDead,
+  sDead,
+};
 class Rival_Snake : public Snake
 {
     public:
@@ -31,7 +36,7 @@ class Rival_Snake : public Snake
         grid_height(grid_height),
         head_x(grid_width),
         head_y(grid_height) {_queue=std::make_shared<MessageQueue>();}
-    void Update(std::shared_ptr<SDL_Point> food, bool &running);
+    void Update(std::shared_ptr<SDL_Point> food, bool &running, SnakeStatus &s_status);
     bool SnakeCell(const int &x, const int &y);
     std::shared_ptr<MessageQueue> getptr(){return _queue;}
     float head_x;
@@ -43,6 +48,7 @@ class Rival_Snake : public Snake
     bool GetFood(){return foodiseaten;}
     private:
     void UpdateHead(std::shared_ptr<SDL_Point> food);
+    void UpdateHead();
     void UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell);
     std::shared_ptr<MessageQueue> _queue;
     bool growing{false};
