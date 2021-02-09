@@ -21,40 +21,31 @@ std::vector<int> _queue;
 std::condition_variable _condition;
 std::mutex _mutex;
 };
-enum SnakeStatus
-{
-  Allalive,
-  rDead,
-  sDead,
-};
+
 class Rival_Snake : public Snake
 {
     public:
-    Rival_Snake(int grid_width, int grid_height)
-      : Snake(),
-        grid_width(grid_width),
-        grid_height(grid_height),
-        head_x(grid_width),
-        head_y(grid_height) {_queue=std::make_shared<MessageQueue>();}
-    void Update(std::shared_ptr<SDL_Point> food, bool &running, SnakeStatus &s_status);
-    bool SnakeCell(const int &x, const int &y);
+    Rival_Snake(int grid_width, int grid_height):Snake()
+    {
+      _grid_width=grid_width;
+      _grid_height=grid_height;
+      _head_x=grid_width;
+      _head_y=grid_height;
+      _queue=std::make_shared<MessageQueue>();
+      _speed=0.1f;
+      _size=1;
+      _growing=false;
+      _alive=true;
+    }
+    void Update(std::shared_ptr<SDL_Point> food, bool &running, bool &s_status);
     std::shared_ptr<MessageQueue> getptr(){return _queue;}
-    float head_x;
-    float head_y;
-    float speed{0.1f};
-    int size{1};
-    std::vector<SDL_Point> body;
-    void GrowBody() { growing = true; }
-    bool GetFood(){return foodiseaten;}
+    bool GetFood(){return _foodiseaten;}
+
     private:
     void UpdateHead(std::shared_ptr<SDL_Point> food);
     void UpdateHead();
-    void UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell);
     std::shared_ptr<MessageQueue> _queue;
-    bool growing{false};
-    bool foodiseaten{false};
-    int grid_width;
-    int grid_height;
+    bool _foodiseaten{false};   
 };
 
 #endif

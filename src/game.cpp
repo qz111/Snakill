@@ -12,11 +12,12 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
     : snake(grid_width, grid_height),
       engine(dev()),
       random_w(1, static_cast<int>(grid_width-1)),
-      random_h(1, static_cast<int>(grid_height-1)) {
-  food=std::make_shared<SDL_Point>();
-  PlaceFood();
-  rsnake=std::make_shared<Rival_Snake>(grid_width, grid_height);
-}
+      random_h(1, static_cast<int>(grid_height-1)) 
+      {
+        food=std::make_shared<SDL_Point>();
+        PlaceFood();
+        rsnake=std::make_shared<Rival_Snake>(grid_width, grid_height);
+      }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
                std::size_t target_frame_duration) {
@@ -26,26 +27,30 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
-  SnakeStatus s_status=SnakeStatus::Allalive;
+  bool checkalive = true;
   SDL_Event e;
-  std::thread t(&Rival_Snake::Update,rsnake,food, std::ref(running), std::ref(s_status));
+
+  // set a new thread for the rival snake to run
+  std::thread t(&Rival_Snake::Update,rsnake,food, std::ref(running), std::ref(checkalive));
+
+  // set a new thread for controller to check the input at any time
   std::thread t1(&Controller::HandleInput,&controller,std::ref(running),std::ref(snake),std::ref(e));
+
+  // main thread set messagequeue send and receive to make the two threads for snake and 
+  // rival snake to coorperate with each other
   while (running) {
     frame_start = SDL_GetTicks();
 
-    // Input, Update, Render - the main game loop.
-    //controller.HandleInput(running, snake);
+    //communicate with thread rsnake to make the two snakes at the same frequenz
     rsnake->getptr()->send(1);
-    Update(s_status);
-    
+    Update();
+    checkalive = snake.getalive();
     if(foodiseaten)
     {
-      //std::cout<<"it is here"<<std::endl;
       PlaceFood();
       foodiseaten=false;
     }
     renderer.Render(snake, rsnake, *food);
-
     frame_end = SDL_GetTicks();
 
     // Keep track of how long each loop through the input/update/render cycle
@@ -67,12 +72,14 @@ void Game::Run(Controller const &controller, Renderer &renderer,
       SDL_Delay(target_frame_duration - frame_duration);
     }
   }
+  // wait until the other threads finished
   rsnake->getptr()->send(1);
   t.join();
   t1.join();
 }
 
-void Game::PlaceFood() {
+void Game::PlaceFood() 
+{
   int x, y;
   while (true) {
     x = random_w(engine);
@@ -87,39 +94,46 @@ void Game::PlaceFood() {
   }
 }
 
-void Game::Update(SnakeStatus &s_status) {
-  if (!snake.alive) 
+void Game::Update() 
+{
+  if (!snake.getalive()) 
   {
-    s_status=SnakeStatus::sDead;
     return;
   }
-  else if(s_status==SnakeStatus::rDead)
+  else if(!rsnake->getalive())
   {
-    snake.Update(rsnake);
+    // if rsnake is dead, the snake you are controlling can also move and manipulated.
+    // But it can not eat the food any more.
+    snake.Update();
   }
   else
   {
     snake.Update(rsnake);
 
-    int new_x = static_cast<int>(snake.head_x);
-    int new_y = static_cast<int>(snake.head_y);
+    int new_x = static_cast<int>(snake.getHeadx());
+    int new_y = static_cast<int>(snake.getHeady());
     // Check if there's food over here
     if (food->x == new_x && food->y == new_y) {
       score++;
       foodiseaten=true;
       // Grow snake and increase speed.
+      // Decrease the speed of the rsnake.
       snake.GrowBody();
-      snake.speed += 0.01;
-      rsnake->speed-=0.02;
+      float sspeed=snake.getSpeed();
+      float rspeed=rsnake->getSpeed();
+      sspeed += 0.01;
+      rspeed-=0.01;
+      snake.setSpeed(std::move(sspeed));
+      rsnake->setSpeed(std::move(rspeed));
     }
+    // Check if the rsnake get the food. If so grow the body.
     else if(rsnake->GetFood())
     {
       foodiseaten=true;
       rsnake->GrowBody();
-      //std::cout<<"it is here 1"<<std::endl;
     }
   }
 }
 
 int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
+int Game::GetSize() const { return snake.getSize(); }

@@ -29,7 +29,7 @@ class Game {
   int score{0};
 
   void PlaceFood();
-  void Update(SnakeStatus &s_status);
+  void Update();
   bool foodiseaten {false};
 };
 

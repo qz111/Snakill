@@ -12,34 +12,46 @@ class Snake {
   enum class Direction { kUp, kDown, kLeft, kRight };
 
   Snake(int grid_width, int grid_height)
-      : grid_width(grid_width),
-        grid_height(grid_height),
-        head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
+      : _grid_width(grid_width),
+        _grid_height(grid_height),
+        _head_x(grid_width / 2),
+        _head_y(grid_height / 2) {}
   Snake(){}
   void Update(std::shared_ptr<Rival_Snake> rsnake);
-
+  void Update();
   void GrowBody();
   bool SnakeCell(const int &x, const int &y);
-  bool CheckTouch(std::shared_ptr<Rival_Snake> rsnake,SDL_Point &current_head_cell);
-  Direction direction = Direction::kUp;
+  void setSpeed(float &&s){_speed=s;}
+  void setDirection(Direction d) {_direction=d;}
+  Direction getDirection() const {return _direction;}
+  float getSpeed() const {return _speed;}
+  float getHeadx() const {return _head_x;}
+  float getHeady() const {return _head_y;}
+  bool getalive() const {return _alive;}
+  int getSize() const {return _size;}
+  std::vector<SDL_Point> getBody() const {return _body;}
+  int getGridw(){return _grid_height;}
 
-  float speed{0.1f};
-  int size{1};
-  bool alive{true};
-  float head_x;
-  float head_y;
-  std::vector<SDL_Point> body;
-  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell, std::shared_ptr<Rival_Snake> rsnake);
-  static std::mutex _mtx;
-
- private:
-  void UpdateHead();
+ protected:
+  Direction _direction = Direction::kUp;
+  void CheckBody(SDL_Point &prev_head_cell);
+  float _speed{0.1f};
+  int _size{1};
   
-
-  bool growing{false};
-  int grid_width;
-  int grid_height;
+  float _head_x;
+  float _head_y;
+  std::vector<SDL_Point> _body;
+  bool _growing{false};
+  int _grid_width;
+  int _grid_height;
+  bool _alive{true};
+  static std::mutex _mtx;
+ private:
+  
+  void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell, std::shared_ptr<Rival_Snake> rsnake);
+  void UpdateHead();
+  bool CheckTouch(std::shared_ptr<Rival_Snake> rsnake,SDL_Point &current_head_cell);
+  
 };
 
 #endif

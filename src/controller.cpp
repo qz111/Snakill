@@ -6,13 +6,15 @@
 #include <chrono>
 
 void Controller::ChangeDirection(Snake &snake, Snake::Direction input,
-                                 Snake::Direction opposite) const {
-  if (snake.direction != opposite || snake.size == 1) snake.direction = input;
+                                 Snake::Direction opposite) const 
+{
+  if (snake.getDirection() != opposite || snake.getSize() == 1) snake.setDirection(input);
   return;
 }
 
-void Controller::HandleInput(bool &running, Snake &snake, SDL_Event &e) const {
-  //SDL_Event e;
+void Controller::HandleInput(bool &running, Snake &snake, SDL_Event &e) const 
+{
+  //the status running can be changed if quit, the game can quit successfully at any time
   while(running)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(1));

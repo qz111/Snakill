@@ -3,7 +3,8 @@
 
 #include "snake.h"
 
-class Controller {
+class Controller 
+{
  public:
   void HandleInput(bool &running, Snake &snake, SDL_Event &e) const;
 
