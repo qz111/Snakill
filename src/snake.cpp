@@ -35,7 +35,7 @@ void Snake::Update()
       static_cast<int>(_head_y)};  
   if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) 
   {
-    _body.push_back(prev_cell);
+    _body.push_back(std::move(prev_cell));
     _body.erase(_body.begin());
   }
 }
@@ -121,7 +121,7 @@ bool Snake::SnakeCell(const int &x, const int &y) {
 
 void Snake::CheckBody(SDL_Point &prev_head_cell) {
   // Add previous head location to vector
-  _body.push_back(prev_head_cell);
+  _body.push_back(std::move(prev_head_cell));
 
   if (!_growing) {
     // Remove the tail from the vector.

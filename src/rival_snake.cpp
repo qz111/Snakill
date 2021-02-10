@@ -82,7 +82,7 @@ void Rival_Snake::Update(std::shared_ptr<SDL_Point> food, bool &running, bool &s
           if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) 
           {
               std::unique_lock<std::mutex> lck(_mtx);
-              _body.push_back(prev_cell);
+              _body.push_back(std::move(prev_cell));
               _body.erase(_body.begin());
               lck.unlock();
               std::this_thread::sleep_for(std::chrono::milliseconds(1));
