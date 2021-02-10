@@ -5,25 +5,25 @@ A new Snake called Rival_Snake is added into the game. You should compete with t
 
 The following rubric points are fulfilled in the code.
 * All class data members are explicitly specified as public, protected, or private.
- * It is covered in every .h file.
+  * It is covered in every .h file.
 * All class members that are set to argument values are initialized through member initialization lists.
- * It is covered in snake.h
+  * It is covered in snake.h
 * Appropriate data and functions are grouped into classes. Member data that is subject to an invariant is hidden from the user. State is accessed via member functions.
- * It is covered in snake.cpp and rival_snake.cpp. There are getter and setter funtions to access the member data.
+  * It is covered in snake.cpp and rival_snake.cpp. There are getter and setter funtions to access the member data.
 * One function is overloaded with different signatures for the same function name.
- * It is covered in snake.h at line 20 and 21. It is also covered in rival_snake.h at line 45 and 46.
+  * It is covered in snake.h at line 20 and 21. It is also covered in rival_snake.h at line 45 and 46.
 * At least two variables are defined as references, or two functions use pass-by-reference in the project code.
- * It is covered in snake.h, rival_snake at line 40 and also in renderer.h at line 15, game.h at line 14 and controller.h at line 9 and 12. 
+  * It is covered in snake.h, rival_snake at line 40 and also in renderer.h at line 15, game.h at line 14 and controller.h at line 9 and 12. 
 * For classes with move constructors, the project returns objects of that class by value, and relies on the move constructor, instead of copying the object.
- * It is covered in snake.cpp at lines 38, 124 and in rival_snake.cpp at lines 12, 24, 85.
+  * It is covered in snake.cpp at lines 38, 124 and in rival_snake.cpp at lines 12, 24, 85.
 * The project uses at least one smart pointer: unique_ptr, shared_ptr, or weak_ptr. The project does not use raw pointers.
- * It is covered in rival_snake.h, snake.h, gmae.h, renderer.h.
+  * It is covered in rival_snake.h, snake.h, gmae.h, renderer.h.
 * The project uses multiple threads in the execution.
- * It is covered in game.cpp at lines 34,37. One for controller and one for rsnake.
+  * It is covered in game.cpp at lines 34,37. One for controller and one for rsnake.
 * A mutex or lock (e.g. std::lock_guard or std::unique_lock) is used to protect data that is shared across multiple threads in the project code.
- * It is covered in rival_snake.cpp at lines 10 and 22. And also at lines 85, 103 and in snake.cpp at line 88 to protect the body update of the rsnake.
+  * It is covered in rival_snake.cpp at lines 10 and 22. And also at lines 85, 103 and in snake.cpp at line 88 to protect the body update of the rsnake.
 * A std::condition_variable is used in the project code to synchronize thread execution.
- * It is covered in rival_snake.h at line 21 to synchronize the thread rsnake and the main thread.
+  * It is covered in rival_snake.h at line 21 to synchronize the thread rsnake and the main thread.
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
